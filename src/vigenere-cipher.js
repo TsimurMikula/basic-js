@@ -20,13 +20,71 @@ const { NotImplementedError } = require('../extensions/index.js');
  * 
  */
 class VigenereCipheringMachine {
-  encrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  constructor(status = true) {
+    this.status = status;
   }
-  decrypt() {
-    throw new NotImplementedError('Not implemented');
-    // remove line with error and write your code here
+  
+  encrypt(message, key) {
+    if  (!message || !key) throw new Error("Incorrect arguments!");
+
+    message = message.toUpperCase();
+    key = key.toUpperCase();
+    let encryptMess = '';
+    let keyRepeat = '';
+    let i = 0;
+    let j = 0;
+    
+    while (message.split(' ').join('').length !== keyRepeat.length) {
+      if (i >= key.length) i = 0;
+      keyRepeat += key[i];
+      i++;
+    }
+   
+    i = 0;
+   
+    while (message.length !== encryptMess.length) {
+      if (`${message[i]}`.codePointAt() > 64 && `${message[i]}`.codePointAt() < 91) {
+        encryptMess += String.fromCodePoint(((`${message[i]}`.codePointAt() + `${keyRepeat[j]}`.codePointAt()) % 26) + 65); 
+        j++;
+      } 
+      else encryptMess += message[i];
+      i++;
+    }
+    return this.status ? encryptMess : encryptMess.split('').reverse().join('');
+  }
+
+  decrypt(encryptMess, key) {
+    if (!encryptMess || !key) throw new Error("Incorrect arguments!");
+    
+    key = key.toUpperCase();
+    let decryptMess = '';
+    let keyRepeat = '';
+    let i = 0;
+    let j = 0;
+    
+    while (encryptMess.split(' ').join('').length !== keyRepeat.length) {
+      if (i >= key.length) i = 0;
+      keyRepeat += key[i];
+      i++;
+    }
+   
+    i = 0;
+   
+    while (encryptMess.length !== decryptMess.length) {
+      if (`${encryptMess[i]}`.codePointAt() > 64 && `${encryptMess[i]}`.codePointAt() < 91) {
+        if ((`${encryptMess[i]}`.codePointAt() - `${keyRepeat[j]}`.codePointAt()) < 0) {
+          decryptMess += String.fromCodePoint(((`${encryptMess[i]}`.codePointAt() - `${keyRepeat[j]}`.codePointAt() + 26) % 26) + 65); 
+          j++;
+        }
+        else {
+          decryptMess += String.fromCodePoint(((`${encryptMess[i]}`.codePointAt() - `${keyRepeat[j]}`.codePointAt()) % 26) + 65); 
+          j++;
+        }
+      } 
+      else decryptMess += encryptMess[i];
+      i++;
+    }
+    return this.status ? decryptMess : decryptMess.split('').reverse().join('');
   }
 }
 
